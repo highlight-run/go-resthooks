@@ -3,6 +3,7 @@ package resthooks
 import (
 	"bytes"
 	"io"
+	"net/http"
 )
 
 const (
@@ -21,11 +22,11 @@ type Status int
 type ResthookStore interface {
 	// Creates subscription if it doesn't have id
 	// and populates the id, otherwise updates it.
-	Save(*Subscription) error
+	Save(*Subscription, *http.Request) error
 
 	FindById(int) (*Subscription, error)
 	FindByUserId(int, string) (*Subscription, error)
-	DeleteById(int) error
+	DeleteById(int, *http.Request) error
 }
 
 type Subscription struct {

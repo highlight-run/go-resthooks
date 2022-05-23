@@ -48,7 +48,7 @@ func (h *Handler) Subscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.rh.Save(s); err != nil {
+	if err := h.rh.Save(s, r); err != nil {
 		http.Error(w, "Error creating subscription.", http.StatusInternalServerError)
 		return
 	}
@@ -73,7 +73,7 @@ func (h *Handler) Unsubscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.rh.DeleteById(int(id)); err != nil {
+	if err := h.rh.DeleteById(int(id), r); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -86,15 +86,15 @@ func (rh Resthook) Handler() http.Handler {
 	return NewHandler(&rh)
 }
 
-func (rh Resthook) Save(s *Subscription) error {
-	return rh.store.Save(s)
+func (rh Resthook) Save(s *Subscription, r *http.Request) error {
+	return rh.store.Save(s, r)
 }
 
 func (rh Resthook) FindById(id int) (*Subscription, error) {
 	return rh.store.FindById(id)
 }
 
-func (rh Resthook) DeleteById(id int) error {
+func (rh Resthook) DeleteById(id int, r *http.Request) error {
 	// validate that subscription actually exists
 	s, err := rh.FindById(id)
 	if err != nil {
@@ -105,7 +105,7 @@ func (rh Resthook) DeleteById(id int) error {
 		return errors.New("Invalid subscription.")
 	}
 
-	return rh.store.DeleteById(s.Id)
+	return rh.store.DeleteById(s.Id, r)
 }
 
 func (rh Resthook) Notify(userId int, event string, data interface{}) error {
@@ -140,7 +140,7 @@ func (rh Resthook) Notify(userId int, event string, data interface{}) error {
 	if resp.StatusCode == 410 {
 		n.Status = STATUS_FAILED
 		rh.result <- n
-		return rh.DeleteById(s.Id)
+		return rh.DeleteById(s.Id, nil)
 	}
 
 	// otherwise we retry
